@@ -1,4 +1,4 @@
-package com.tappytaps.android.appsharing;
+package com.tappytaps.android.appsharingtest;
 
 import org.junit.Test;
 

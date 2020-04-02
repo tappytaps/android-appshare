@@ -3,6 +3,13 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven {
+            url myMavenRepoReadUrl
+            credentials {
+                username = 'myMavenRepo'
+                password = myMavenRepoReadPassword
+            }
+        }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.0.0-beta03"
