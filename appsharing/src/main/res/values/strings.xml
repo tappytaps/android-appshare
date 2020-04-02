@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lib_name">app sharing</string>
+    <string name="title_recommend">Recommend the app to your friends.</string>
+    <string name="clipboard_copied">Clipboard copied.</string>
+    <string name="btn_facebook">Facebook</string>
+    <string name="btn_messenger">Messenger</string>
+    <string name="btn_twitter">Twitter</string>
+    <string name="btn_whats_app">WhatsApp</string>
+    <string name="btn_email">Email</string>
+    <string name="btn_copy_link">Copy Link</string>
+    <string name="btn_more">More</string>
+</resources>

@@ -1,0 +1,3 @@
+include ':appsharing'
+include ':app'
+rootProject.name = "appsharing"
