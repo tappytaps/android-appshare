@@ -28,7 +28,10 @@ public class TestActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 new ShareAppFragment.Builder()
-                        .setDescription("Testing")
+                        .setSimpleMessage("Simple message saying something very clever")
+                        .setEmailSubject("Something to share")
+                        .setFacebookQuote("At the link below you can find...")
+                        .setTwitterMessage("This message also says something clever, shares {url} #and #sum #hashtagz")
                         .setUrl("https://www.babymonitor3g.com")
                         .show(getSupportFragmentManager());
             }

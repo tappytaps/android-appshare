@@ -40,21 +40,16 @@
                 android:text="@string/title_recommend"
                 android:textColor="#DE000000"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/facebook"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <include
                 android:id="@+id/facebook"
                 layout="@layout/include_share_item"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/messenger"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvRecommend" />
 
@@ -63,9 +58,7 @@
                 layout="@layout/include_share_item"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/twitter"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/facebook" />
 
@@ -74,33 +67,73 @@
                 layout="@layout/include_share_item"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/whatsapp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/messenger" />
+
+            <include
+                android:id="@+id/vkontakte"
+                layout="@layout/include_share_item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/twitter" />
+
+            <include
+                android:id="@+id/wechat"
+                layout="@layout/include_share_item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vkontakte" />
+
+            <include
+                android:id="@+id/odnoklassniki"
+                layout="@layout/include_share_item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/wechat" />
+
+            <include
+                android:id="@+id/viber"
+                layout="@layout/include_share_item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/odnoklassniki" />
 
             <include
                 android:id="@+id/whatsapp"
                 layout="@layout/include_share_item"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/email"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/twitter" />
+                app:layout_constraintTop_toBottomOf="@+id/viber" />
 
             <include
                 android:id="@+id/email"
                 layout="@layout/include_share_item"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/copylink"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/whatsapp" />
+
+            <include
+                android:id="@+id/sms"
+                layout="@layout/include_share_item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="@+id/copylink"
+                app:layout_constraintStart_toStartOf="@+id/copylink"
+                app:layout_constraintTop_toBottomOf="@+id/email" />
 
             <include
                 android:id="@+id/copylink"
@@ -108,9 +141,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/email" />
+                app:layout_constraintTop_toBottomOf="@id/sms" />
 
             <include
                 android:id="@+id/more"
