@@ -5,6 +5,11 @@ group = 'com.tappytaps.android'
 archivesBaseName = 'app-sharing'
 version = '0.2.0'
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def myMavenRepoWriteUrl = properties.getProperty('myMavenRepoWriteUrl')
+def myMavenRepoWritePassword = properties.getProperty('myMavenRepoWritePassword')
+
 publishing {
     repositories {
         maven {

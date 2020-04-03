@@ -230,11 +230,11 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaFacebook() {
-        String message = description + "\r\n" + url;
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setClassName(FACEBOOK_PACKAGE_NAME,
-                FACEBOOK_PACKAGE_NAME + ".ShareLinkActivity");
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, message);
+                FACEBOOK_PACKAGE_NAME + ".activity.composer.ImplicitShareIntentHandler");
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, description);
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, url);
 
         try {
             startActivity(sharingIntent);
@@ -244,12 +244,10 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaMessenger() {
-        String message = description + "\r\n" + url;
         Intent sharingIntent = new Intent();
         sharingIntent.setAction(Intent.ACTION_SEND);
-        sharingIntent
-                .putExtra(Intent.EXTRA_TEXT,
-                        message);
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, description);
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, url);
         sharingIntent.setType("text/plain");
         sharingIntent.setPackage(MESSENGER_PACKAGE_NAME);
 
@@ -262,11 +260,11 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaTwitter() {
-        String message = description + "\r\n" + url;
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setClassName(TWITTER_PACKAGE_NAME,
                 TWITTER_PACKAGE_NAME + ".PostActivity");
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, description);
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, url);
 
         try {
             startActivity(sharingIntent);
@@ -276,11 +274,11 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaWhatsApp() {
-        String message = description + "\r\n" + url;
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         sharingIntent.setPackage(WHATS_APP_PACKAGE_NAME);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, description);
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, url);
 
         try {
             startActivity(sharingIntent);

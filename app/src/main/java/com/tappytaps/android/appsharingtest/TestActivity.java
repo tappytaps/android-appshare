@@ -29,7 +29,7 @@ public class TestActivity extends AppCompatActivity {
             public void onClick(View view) {
                 new ShareAppFragment.Builder()
                         .setDescription("Testing")
-                        .setUrl("https://www.google.com")
+                        .setUrl("https://www.babymonitor3g.com")
                         .show(getSupportFragmentManager());
             }
         });
