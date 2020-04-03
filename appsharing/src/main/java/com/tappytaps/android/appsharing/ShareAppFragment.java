@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
+
 import de.cketti.mailto.EmailIntentBuilder;
 
 public class ShareAppFragment extends DialogFragment {
@@ -31,7 +35,7 @@ public class ShareAppFragment extends DialogFragment {
     public static class Builder {
         private String description;
         private String url;
-        @StringRes private int styleRes = 0;
+        @StyleRes private int styleRes = R.style.Theme_AppCompat_Light;
 
         public Builder setDescription(String description) {
             this.description = description;
@@ -49,28 +53,24 @@ public class ShareAppFragment extends DialogFragment {
         }
 
         public void show(FragmentManager fragmentManager) {
-            ShareAppFragment instance = newInstance(description, url);
-
-            if (styleRes != 0) {
-                instance.styleRes = styleRes;
-            }
-
-            instance.show(fragmentManager, TAG);
+            Bundle args = new Bundle();
+            args.putString(KEY_DESCRIPTION, description);
+            args.putString(KEY_URL, url);
+            args.putInt(KEY_STYLE_RES, styleRes);
+            newInstance(args).show(fragmentManager, TAG);
         }
     }
 
-    private static ShareAppFragment newInstance(String description, String url) {
+    private static ShareAppFragment newInstance(Bundle args) {
         ShareAppFragment fragment = new ShareAppFragment();
-        Bundle args = new Bundle();
-        args.putString(EXTRA_DESCRIPTION, description);
-        args.putString(EXTRA_URL, url);
         fragment.setArguments(args);
 
         return fragment;
     }
 
-    private static final String EXTRA_DESCRIPTION = "description";
-    private static final String EXTRA_URL = "url";
+    private static final String KEY_DESCRIPTION = "description";
+    private static final String KEY_URL = "url";
+    private static final String KEY_STYLE_RES = "style_res";
 
     private static final String TAG = "ShareAppFragment";
 
@@ -79,7 +79,7 @@ public class ShareAppFragment extends DialogFragment {
     private static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
     private static final String WHATS_APP_PACKAGE_NAME = "com.whatsapp";
 
-    private @StyleRes int styleRes = R.style.Theme_AppCompat_Light;
+    private @StyleRes int styleRes;
 
     private String description;
     private String url;
@@ -96,6 +96,14 @@ public class ShareAppFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle args = getArguments();
+
+        if (args != null) {
+            description = args.getString(KEY_DESCRIPTION);
+            url = args.getString(KEY_URL);
+            styleRes = args.getInt(KEY_STYLE_RES);
+        }
+
         setStyle(STYLE_NO_FRAME, styleRes);
     }
 
@@ -108,13 +116,6 @@ public class ShareAppFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        Bundle args = getArguments();
-
-        if (args != null) {
-            description = args.getString(EXTRA_DESCRIPTION);
-            url = args.getString(EXTRA_URL);
-        }
 
         Toolbar toolbar = view.findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_close_cross);
@@ -230,24 +231,18 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaFacebook() {
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setClassName(FACEBOOK_PACKAGE_NAME,
-                FACEBOOK_PACKAGE_NAME + ".activity.composer.ImplicitShareIntentHandler");
-        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, description);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, url);
+        ShareLinkContent content = new ShareLinkContent.Builder()
+                .setContentUrl(Uri.parse(url))
+                .setQuote(description)
+                .build();
 
-        try {
-            startActivity(sharingIntent);
-        } catch (Exception e) {
-            Log.d(TAG, "Facebook not present, cannot share.");
-        }
+        ShareDialog.show(this, content);
     }
 
     private void shareViaMessenger() {
         Intent sharingIntent = new Intent();
         sharingIntent.setAction(Intent.ACTION_SEND);
-        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, description);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, url);
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, description  + "\r\n" + url);
         sharingIntent.setType("text/plain");
         sharingIntent.setPackage(MESSENGER_PACKAGE_NAME);
 
@@ -261,10 +256,8 @@ public class ShareAppFragment extends DialogFragment {
 
     private void shareViaTwitter() {
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setClassName(TWITTER_PACKAGE_NAME,
-                TWITTER_PACKAGE_NAME + ".PostActivity");
-        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, description);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, url);
+        sharingIntent.setClassName(TWITTER_PACKAGE_NAME, TWITTER_PACKAGE_NAME + ".PostActivity");
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, description  + "\r\n" + url);
 
         try {
             startActivity(sharingIntent);
@@ -277,8 +270,7 @@ public class ShareAppFragment extends DialogFragment {
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
         sharingIntent.setType("text/plain");
         sharingIntent.setPackage(WHATS_APP_PACKAGE_NAME);
-        sharingIntent.putExtra(Intent.EXTRA_SUBJECT, description);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, url);
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, description  + "\r\n" + url);
 
         try {
             startActivity(sharingIntent);
