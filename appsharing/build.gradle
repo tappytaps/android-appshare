@@ -68,9 +68,11 @@ dependencies {
     // mailer
     implementation 'de.cketti.mailto:email-intent-builder:2.0.0'
 
-    // facebook
+    // facebook share
     implementation 'com.facebook.android:facebook-share:5.1.1'
 
+    // qr codes
+    implementation 'com.google.zxing:core:3.4.0'
 
     testImplementation 'junit:junit:4.12'
 

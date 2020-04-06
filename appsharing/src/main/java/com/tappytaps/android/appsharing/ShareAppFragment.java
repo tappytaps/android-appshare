@@ -1,9 +1,14 @@
 package com.tappytaps.android.appsharing;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,8 +22,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.annotation.StyleRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -27,6 +32,12 @@ import androidx.fragment.app.FragmentManager;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
+import java.util.List;
 
 import de.cketti.mailto.EmailIntentBuilder;
 
@@ -101,6 +112,8 @@ public class ShareAppFragment extends DialogFragment {
     private static final String FACEBOOK_PACKAGE_NAME = "com.facebook.katana";
     private static final String MESSENGER_PACKAGE_NAME = "com.facebook.orca";
     private static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
+    private static final String VKONTAKTE_PACKAGE_NAME = "com.vkontakte.android";
+    private static final String WE_CHAT_PACKAGE_NAME = "com.tencent.mm";
     private static final String WHATS_APP_PACKAGE_NAME = "com.whatsapp";
 
     private @StyleRes int styleRes;
@@ -120,6 +133,8 @@ public class ShareAppFragment extends DialogFragment {
     private ConstraintLayout layoutViber;
     private ConstraintLayout layoutWhatsApp;
     private ConstraintLayout layoutEmail;
+    private ConstraintLayout layoutSms;
+    private ConstraintLayout layoutQrCode;
     private ConstraintLayout layoutCopyLink;
     private ConstraintLayout layoutMore;
 
@@ -169,6 +184,8 @@ public class ShareAppFragment extends DialogFragment {
         layoutViber = view.findViewById(R.id.viber);
         layoutWhatsApp = view.findViewById(R.id.whatsapp);
         layoutEmail = view.findViewById(R.id.email);
+        layoutSms = view.findViewById(R.id.sms);
+        layoutQrCode = view.findViewById(R.id.qrcode);
         layoutCopyLink = view.findViewById(R.id.copylink);
         layoutMore = view.findViewById(R.id.more);
 
@@ -187,12 +204,14 @@ public class ShareAppFragment extends DialogFragment {
         setupItem(layoutFacebook, ContextCompat.getDrawable(getContext(), R.drawable.ic_facebook), getString(R.string.btn_facebook));
         setupItem(layoutMessenger, ContextCompat.getDrawable(getContext(), R.drawable.ic_messenger), getString(R.string.btn_messenger));
         setupItem(layoutTwitter, ContextCompat.getDrawable(getContext(), R.drawable.ic_twitter), getString(R.string.btn_twitter));
-        setupItem(layoutVKontakte, ContextCompat.getDrawable(getContext(), R.drawable.ic_wechat), getString(R.string.btn_vkontakte));
+        setupItem(layoutVKontakte, ContextCompat.getDrawable(getContext(), R.drawable.ic_vkontakte), getString(R.string.btn_vkontakte));
         setupItem(layoutWeChat, ContextCompat.getDrawable(getContext(), R.drawable.ic_wechat), getString(R.string.btn_wechat));
-        setupItem(layoutOdnoklassniki, ContextCompat.getDrawable(getContext(), R.drawable.ic_wechat), getString(R.string.btn_odnoklassniki));
-        setupItem(layoutViber, ContextCompat.getDrawable(getContext(), R.drawable.ic_wechat), getString(R.string.btn_viber));
+        setupItem(layoutOdnoklassniki, ContextCompat.getDrawable(getContext(), R.drawable.ic_odnoklassniki), getString(R.string.btn_odnoklassniki));
+        setupItem(layoutViber, ContextCompat.getDrawable(getContext(), R.drawable.ic_viber), getString(R.string.btn_viber));
         setupItem(layoutWhatsApp, ContextCompat.getDrawable(getContext(), R.drawable.ic_whatsapp), getString(R.string.btn_whats_app));
         setupItem(layoutEmail, ContextCompat.getDrawable(getContext(), R.drawable.ic_message), getString(R.string.btn_email));
+        setupItem(layoutSms, ContextCompat.getDrawable(getContext(), R.drawable.ic_sms), getString(R.string.btn_sms));
+        setupItem(layoutQrCode, ContextCompat.getDrawable(getContext(), R.drawable.ic_qr_code), getString(R.string.btn_qr_code));
         setupItem(layoutCopyLink, ContextCompat.getDrawable(getContext(), R.drawable.ic_copy), getString(R.string.btn_copy_link));
         setupItem(layoutMore, ContextCompat.getDrawable(getContext(), R.drawable.ic_more), getString(R.string.btn_more));
     }
@@ -287,6 +306,20 @@ public class ShareAppFragment extends DialogFragment {
             }
         });
 
+        layoutSms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareViaSms();
+            }
+        });
+
+        layoutQrCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showQrCode();
+            }
+        });
+
         layoutCopyLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -340,11 +373,37 @@ public class ShareAppFragment extends DialogFragment {
 
     // TODO app specific sharing
     private void shareViaVKontakte() {
-        openShareChooser();
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, facebookQuote + " " + url);
+        List<ResolveInfo> matches = getContext().getPackageManager().queryIntentActivities(intent, 0);
+
+        for (ResolveInfo info : matches) {
+            if (info.activityInfo.packageName.toLowerCase().startsWith(VKONTAKTE_PACKAGE_NAME)) {
+                intent.setPackage(info.activityInfo.packageName);
+                break;
+            }
+        }
+
+        try {
+            startActivity(intent);
+        } catch (Exception e) {
+            Log.d(TAG, "VKontakte not present, cannot share.");
+        }
     }
 
     private void shareViaWeChat() {
-        openShareChooser();
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        i.setPackage(WE_CHAT_PACKAGE_NAME);
+        i.putExtra(Intent.EXTRA_SUBJECT, simpleMessage);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        try {
+            startActivity(i);
+        } catch (Exception e) {
+            Log.d(TAG, "WeChat not present, cannot share.");
+        }
     }
 
     private void shareVieOdnoklassniki() {
@@ -385,6 +444,46 @@ public class ShareAppFragment extends DialogFragment {
         Intent sharingIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"));
         sharingIntent.putExtra("sms_body", simpleMessage);
         startActivity(sharingIntent);
+    }
+
+    private void showQrCode() {
+        final QRCodeWriter writer = new QRCodeWriter();
+        final ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.title_preparing_qr_code));
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final BitMatrix bitMatrix = writer.encode(url, BarcodeFormat.QR_CODE, 1024, 1024);
+                    final int width = bitMatrix.getWidth();
+                    final int height = bitMatrix.getHeight();
+                    final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+
+                    for (int x = 0; x < width; x++) {
+                        for (int y = 0; y < height; y++) {
+                            bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                        }
+                    }
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.dismiss();
+
+                            ImageView imageView = new ImageView(getContext());
+                            imageView.setImageBitmap(bmp);
+
+                            new AlertDialog.Builder(getContext())
+                                    .setView(imageView)
+                                    .show();
+                        }
+                    });
+
+                } catch (WriterException e) {
+                    Log.d(TAG, "QR code generator failed.");
+                }
+            }
+        }).start();
     }
 
     private void copyLink() {

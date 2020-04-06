@@ -12,6 +12,9 @@
     <string name="btn_viber">Viber</string>
     <string name="btn_whats_app">WhatsApp</string>
     <string name="btn_email">Email</string>
+    <string name="btn_sms">Sms</string>
+    <string name="btn_qr_code">QR Code</string>
     <string name="btn_copy_link">Copy Link</string>
     <string name="btn_more">More</string>
+    <string name="title_preparing_qr_code">Preparing QR Code…</string>
 </resources>

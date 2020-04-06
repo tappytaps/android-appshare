@@ -136,13 +136,22 @@
                 app:layout_constraintTop_toBottomOf="@+id/email" />
 
             <include
-                android:id="@+id/copylink"
+                android:id="@+id/qrcode"
                 layout="@layout/include_share_item"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/sms" />
+
+            <include
+                android:id="@+id/copylink"
+                layout="@layout/include_share_item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/qrcode" />
 
             <include
                 android:id="@+id/more"
