@@ -1,6 +1,5 @@
 package com.tappytaps.android.appsharing;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -114,6 +113,8 @@ public class ShareAppFragment extends DialogFragment {
     private static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
     private static final String VKONTAKTE_PACKAGE_NAME = "com.vkontakte.android";
     private static final String WE_CHAT_PACKAGE_NAME = "com.tencent.mm";
+    private static final String ODNOKLASSNIKI_PACKAGE_NAME = "ru.ok.android";
+    private static final String VIBER_PACKAGE_NAME = "com.viber.voip";
     private static final String WHATS_APP_PACKAGE_NAME = "com.whatsapp";
 
     private @StyleRes int styleRes;
@@ -258,35 +259,49 @@ public class ShareAppFragment extends DialogFragment {
             layoutTwitter.setVisibility(View.GONE);
         }
 
-        // TODO check for packages
-        layoutVKontakte.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareViaVKontakte();
-            }
-        });
+        if (isPackageInstalled(VKONTAKTE_PACKAGE_NAME)) {
+            layoutVKontakte.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    shareViaVKontakte();
+                }
+            });
+        } else {
+            layoutVKontakte.setVisibility(View.GONE);
+        }
 
-        layoutWeChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareViaWeChat();
-            }
-        });
+        if (isPackageInstalled(WE_CHAT_PACKAGE_NAME)) {
+            layoutWeChat.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    shareViaWeChat();
+                }
+            });
+        } else {
+            layoutWeChat.setVisibility(View.GONE);
+        }
 
-        layoutOdnoklassniki.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareVieOdnoklassniki();
-            }
-        });
+        if (isPackageInstalled(ODNOKLASSNIKI_PACKAGE_NAME)) {
+            layoutOdnoklassniki.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    shareVieOdnoklassniki();
+                }
+            });
+        } else {
+            layoutOdnoklassniki.setVisibility(View.GONE);
+        }
 
-        layoutViber.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareViaViber();
-            }
-        });
-        // TODO ------------------
+        if (isPackageInstalled(VIBER_PACKAGE_NAME)) {
+            layoutViber.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    shareViaViber();
+                }
+            });
+        } else {
+            layoutViber.setVisibility(View.GONE);
+        }
 
         if (isPackageInstalled(WHATS_APP_PACKAGE_NAME)) {
             layoutWhatsApp.setOnClickListener(new View.OnClickListener() {
@@ -371,7 +386,6 @@ public class ShareAppFragment extends DialogFragment {
         }
     }
 
-    // TODO app specific sharing
     private void shareViaVKontakte() {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
@@ -396,7 +410,7 @@ public class ShareAppFragment extends DialogFragment {
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         i.setPackage(WE_CHAT_PACKAGE_NAME);
-        i.putExtra(Intent.EXTRA_SUBJECT, simpleMessage);
+        i.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         try {
@@ -407,13 +421,30 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareVieOdnoklassniki() {
-        openShareChooser();
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.setPackage(VIBER_PACKAGE_NAME);
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, simpleMessage);
+
+        try {
+            startActivity(sharingIntent);
+        } catch (android.content.ActivityNotFoundException ex) {
+            Log.d(TAG, "Odnoklassniki not present, cannot share.");
+        }
     }
 
     private void shareViaViber() {
-        openShareChooser();
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.setPackage(ODNOKLASSNIKI_PACKAGE_NAME);
+        sharingIntent.putExtra(Intent.EXTRA_TEXT, simpleMessage);
+
+        try {
+            startActivity(sharingIntent);
+        } catch (android.content.ActivityNotFoundException ex) {
+            Log.d(TAG, "Viber not present, cannot share.");
+        }
     }
-    // TODO ----------------------
 
     private void shareViaWhatsApp() {
         Intent sharingIntent = new Intent(Intent.ACTION_SEND);
