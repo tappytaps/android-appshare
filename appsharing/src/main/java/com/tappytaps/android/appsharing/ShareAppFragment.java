@@ -1,13 +1,10 @@
 package com.tappytaps.android.appsharing;
 
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +19,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
@@ -31,10 +27,6 @@ import androidx.fragment.app.FragmentManager;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 
 import java.util.List;
 
@@ -43,11 +35,12 @@ import de.cketti.mailto.EmailIntentBuilder;
 public class ShareAppFragment extends DialogFragment {
 
     public static class Builder {
-        private String simpleMessage;
-        private String emailSubject;
-        private String facebookQuote;
-        private String twitterMessage;
-        private String url;
+        @Nullable private String simpleMessage = null;
+        @Nullable private String emailSubject = null;
+        @Nullable private String facebookQuote = null;
+        @Nullable private String twitterMessage = null;
+        @Nullable private String url = null;
+        @Nullable private String qrCodeUrl = null;
         @StyleRes private int styleRes = R.style.Theme_AppCompat_Light;
 
         public Builder setSimpleMessage(String simpleMessage) {
@@ -70,8 +63,13 @@ public class ShareAppFragment extends DialogFragment {
             return this;
         }
 
-        public Builder setUrl(String url) {
+        public Builder setUrl(@NonNull String url) {
             this.url = url;
+            return this;
+        }
+
+        public Builder setQrCodeUrl(String qrCodeUrl) {
+            this.qrCodeUrl = qrCodeUrl;
             return this;
         }
 
@@ -81,13 +79,24 @@ public class ShareAppFragment extends DialogFragment {
         }
 
         public void show(FragmentManager fragmentManager) {
+            if (url == null) {
+                throw new IllegalStateException("At least an URL is required.");
+            }
+
+            final String simpleMessage = this.simpleMessage != null ? this.simpleMessage + " " + url : url;
+            final String facebookQuote = this.facebookQuote != null ? this.facebookQuote : this.simpleMessage;
+            final String twitterMessage = this.twitterMessage != null ? this.twitterMessage.replace("{url}", url) : url;
+            final String qrCodeUrl = this.qrCodeUrl != null ? this.qrCodeUrl : url;
+
             Bundle args = new Bundle();
-            args.putString(KEY_SIMPLE_MESSAGE, simpleMessage + " " + url);
+            args.putString(KEY_SIMPLE_MESSAGE, simpleMessage);
             args.putString(KEY_EMAIL_SUBJECT, emailSubject);
             args.putString(KEY_FACEBOOK_QUOTE, facebookQuote);
-            args.putString(KEY_TWITTER_MESSAGE, twitterMessage.replace("{url}", url));
+            args.putString(KEY_TWITTER_MESSAGE, twitterMessage);
             args.putString(KEY_URL, url);
+            args.putString(KEY_QR_CODE_URL, qrCodeUrl);
             args.putInt(KEY_STYLE_RES, styleRes);
+
             newInstance(args).show(fragmentManager, TAG);
         }
     }
@@ -104,6 +113,7 @@ public class ShareAppFragment extends DialogFragment {
     private static final String KEY_FACEBOOK_QUOTE = "facebook_quote";
     private static final String KEY_TWITTER_MESSAGE = "twitter_message";
     private static final String KEY_URL = "url";
+    private static final String KEY_QR_CODE_URL = "qr_code_url";
     private static final String KEY_STYLE_RES = "style_res";
 
     private static final String TAG = "ShareAppFragment";
@@ -124,6 +134,7 @@ public class ShareAppFragment extends DialogFragment {
     private String facebookQuote;
     private String twitterMessage;
     private String url;
+    private String qrCodeUrl;
 
     private ConstraintLayout layoutFacebook;
     private ConstraintLayout layoutMessenger;
@@ -147,10 +158,11 @@ public class ShareAppFragment extends DialogFragment {
 
         if (args != null) {
             simpleMessage = args.getString(KEY_SIMPLE_MESSAGE);
-            emailSubject = args.getString(KEY_EMAIL_SUBJECT);
+            emailSubject = args.getString(KEY_EMAIL_SUBJECT, "");
             facebookQuote = args.getString(KEY_FACEBOOK_QUOTE);
             twitterMessage = args.getString(KEY_TWITTER_MESSAGE);
             url = args.getString(KEY_URL);
+            qrCodeUrl = args.getString(KEY_QR_CODE_URL);
             styleRes = args.getInt(KEY_STYLE_RES);
         }
 
@@ -478,43 +490,8 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void showQrCode() {
-        final QRCodeWriter writer = new QRCodeWriter();
-        final ProgressDialog progressDialog = ProgressDialog.show(getContext(), null, getString(R.string.title_preparing_qr_code));
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final BitMatrix bitMatrix = writer.encode(url, BarcodeFormat.QR_CODE, 1024, 1024);
-                    final int width = bitMatrix.getWidth();
-                    final int height = bitMatrix.getHeight();
-                    final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-
-                    for (int x = 0; x < width; x++) {
-                        for (int y = 0; y < height; y++) {
-                            bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
-                        }
-                    }
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.dismiss();
-
-                            ImageView imageView = new ImageView(getContext());
-                            imageView.setImageBitmap(bmp);
-
-                            new AlertDialog.Builder(getContext())
-                                    .setView(imageView)
-                                    .show();
-                        }
-                    });
-
-                } catch (WriterException e) {
-                    Log.d(TAG, "QR code generator failed.");
-                }
-            }
-        }).start();
+        QrCodeFragment qrCodeFragment = QrCodeFragment.newInstance(qrCodeUrl, styleRes);
+        qrCodeFragment.show(getChildFragmentManager(), QrCodeFragment.TAG);
     }
 
     private void copyLink() {

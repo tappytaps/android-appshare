@@ -33,6 +33,7 @@ public class TestActivity extends AppCompatActivity {
                         .setFacebookQuote("At the link below you can find...")
                         .setTwitterMessage("This message also says something clever, shares {url} #and #sum #hashtagz")
                         .setUrl("https://www.babymonitor3g.com")
+                        .setQrCodeUrl("https://www.tappytaps.com")
                         .show(getSupportFragmentManager());
             }
         });

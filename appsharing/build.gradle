@@ -3,7 +3,7 @@ apply plugin: 'maven-publish'
 
 group = 'com.tappytaps.android'
 archivesBaseName = 'app-sharing'
-version = '0.2.0'
+version = '0.3.4'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -29,8 +29,18 @@ publishing {
 
             // Optional
             pom.withXml {
-                asNode().appendNode('name','App Sharing')
-                asNode().appendNode('description','TappyTaps App Sharing Library')
+                asNode().appendNode('name', 'App Sharing')
+                asNode().appendNode('description', 'TappyTaps App Sharing Library')
+
+                def dependenciesNode = asNode().appendNode('dependencies')
+                configurations.implementation.allDependencies.each { dependency ->
+                    if (dependency.name != 'unspecified') {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dependency.group)
+                        dependencyNode.appendNode('artifactId', dependency.name)
+                        dependencyNode.appendNode('version', dependency.version)
+                    }
+                }
             }
 
             artifact("$buildDir/outputs/aar/${archivesBaseName}-release.aar")        }
@@ -63,18 +73,18 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation "androidx.constraintlayout:constraintlayout:1.1.3"
-    implementation "androidx.fragment:fragment:1.2.3"
+    implementation "androidx.fragment:fragment:1.2.4"
 
     // mailer
     implementation 'de.cketti.mailto:email-intent-builder:2.0.0'
 
     // facebook share
-    implementation 'com.facebook.android:facebook-share:5.1.1'
+    implementation 'com.facebook.android:facebook-share:5.15.3'
 
     // qr codes
     implementation 'com.google.zxing:core:3.4.0'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
