@@ -20,6 +20,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 public class QrCodeFragment extends DialogFragment {
 
@@ -75,37 +76,17 @@ public class QrCodeFragment extends DialogFragment {
         });
 
         final ImageView ivQrCode = view.findViewById(R.id.ivQrCode);
-        final ProgressBar progressBar = view.findViewById(R.id.progressBar);
         final QRCodeWriter writer = new QRCodeWriter();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final BitMatrix bitMatrix = writer.encode(url, BarcodeFormat.QR_CODE, 512, 512);
-                    final int width = bitMatrix.getWidth();
-                    final int height = bitMatrix.getHeight();
-                    final Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        try {
+            final BitMatrix bitMatrix = writer.encode(url, BarcodeFormat.QR_CODE, 512, 512);
+            final BarcodeEncoder encoder = new BarcodeEncoder();
+            final Bitmap bmp = encoder.createBitmap(bitMatrix);
 
-                    for (int x = 0; x < width; x++) {
-                        for (int y = 0; y < height; y++) {
-                            bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.TRANSPARENT);
-                        }
-                    }
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ivQrCode.setImageBitmap(bmp);
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    });
-
-                } catch (WriterException e) {
-                    Log.d(TAG, "QR code generator failed.");
-                }
-            }
-        }).start();
+            ivQrCode.setImageBitmap(bmp);
+        } catch (WriterException e) {
+            Log.d(TAG, "QR code generator failed.");
+        }
     }
 
     @Override
