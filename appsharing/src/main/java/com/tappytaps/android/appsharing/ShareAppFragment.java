@@ -83,8 +83,8 @@ public class ShareAppFragment extends DialogFragment {
                 throw new IllegalStateException("At least an URL is required.");
             }
 
-            final String simpleMessage = this.simpleMessage != null ? this.simpleMessage + " " + url : url;
-            final String facebookQuote = this.facebookQuote != null ? this.facebookQuote : this.simpleMessage;
+            final String simpleMessage = this.simpleMessage != null ? this.simpleMessage.replace("{url}", url) : url;
+            final String facebookQuote = this.facebookQuote != null ? this.facebookQuote.replace("{url}", url) : this.simpleMessage;
             final String twitterMessage = this.twitterMessage != null ? this.twitterMessage.replace("{url}", url) : url;
             final String qrCodeUrl = this.qrCodeUrl != null ? this.qrCodeUrl : url;
 
@@ -372,11 +372,7 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaMessenger() {
-        Intent sharingIntent = new Intent();
-        sharingIntent.setAction(Intent.ACTION_SEND);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, simpleMessage);
-        sharingIntent.setType("text/plain");
-        sharingIntent.setPackage(MESSENGER_PACKAGE_NAME);
+        Intent sharingIntent = initCommonShareIntent(MESSENGER_PACKAGE_NAME, simpleMessage);
 
         try {
             startActivity(sharingIntent);
@@ -387,9 +383,7 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaTwitter() {
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setClassName(TWITTER_PACKAGE_NAME, TWITTER_PACKAGE_NAME + ".PostActivity");
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, twitterMessage);
+        Intent sharingIntent = initCommonShareIntent(TWITTER_PACKAGE_NAME, twitterMessage);
 
         try {
             startActivity(sharingIntent);
@@ -399,17 +393,7 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaVKontakte() {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, facebookQuote + " " + url);
-        List<ResolveInfo> matches = getContext().getPackageManager().queryIntentActivities(intent, 0);
-
-        for (ResolveInfo info : matches) {
-            if (info.activityInfo.packageName.toLowerCase().startsWith(VKONTAKTE_PACKAGE_NAME)) {
-                intent.setPackage(info.activityInfo.packageName);
-                break;
-            }
-        }
+        Intent intent = initCommonShareIntent(VKONTAKTE_PACKAGE_NAME, facebookQuote);
 
         try {
             startActivity(intent);
@@ -433,10 +417,7 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareVieOdnoklassniki() {
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        sharingIntent.setPackage(VIBER_PACKAGE_NAME);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, simpleMessage);
+        Intent sharingIntent = initCommonShareIntent(VIBER_PACKAGE_NAME, simpleMessage);
 
         try {
             startActivity(sharingIntent);
@@ -446,10 +427,7 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaViber() {
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        sharingIntent.setPackage(ODNOKLASSNIKI_PACKAGE_NAME);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, simpleMessage);
+        Intent sharingIntent = initCommonShareIntent(ODNOKLASSNIKI_PACKAGE_NAME, simpleMessage);
 
         try {
             startActivity(sharingIntent);
@@ -459,10 +437,7 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaWhatsApp() {
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        sharingIntent.setPackage(WHATS_APP_PACKAGE_NAME);
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, simpleMessage);
+        Intent sharingIntent = initCommonShareIntent(WHATS_APP_PACKAGE_NAME, simpleMessage);
 
         try {
             startActivity(sharingIntent);
@@ -517,5 +492,12 @@ public class ShareAppFragment extends DialogFragment {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private Intent initCommonShareIntent(String appPackageName, String message) {
+        return new Intent(Intent.ACTION_SEND)
+                .setType("text/plain")
+                .setPackage(appPackageName)
+                .putExtra(Intent.EXTRA_TEXT, message);
     }
 }
