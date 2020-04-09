@@ -35,11 +35,11 @@ You can use ShareAppFragment.Builder to create and show instance as shown in the
 - `setFacebookQuote()` for Facebook or `setTwitterMessage()` for Twitter may be used to customize messages for these netowrks, if they aren't set explicitly, simple message will be used
 - `setQrCodeUrl()` may be used for different url in QR code, if not set url will be used
 
-> Note that tweet may contain `{url}` to place link inside
+> Note: Strings may contain `{url}` to place URL inside
 
 ```java
 new ShareAppFragment.Builder()
-        .setSimpleMessage("String to send in messaging")
+        .setSimpleMessage("String to send in messaging {url}")
         .setEmailSubject("Subject in email")
         .setFacebookQuote("Text for Facebook post")
         .setTwitterMessage("Text for Twitter tweet {url}.")
