@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="lib_name" translatable="false">app sharing</string>
-    <string name="title_recommend">Recommend the app to your friends</string>
-    <string name="title_qr_code">Scan this QR code</string>
-    <string name="clipboard_copied">Link copied</string>
+    <string name="title_recommend">Recomienda la aplicación a tus amigos</string>
+    <string name="title_qr_code">Escanea este código QR</string>
+    <string name="clipboard_copied">Enlace copiado</string>
     <string name="btn_facebook">Facebook</string>
     <string name="btn_messenger">Messenger</string>
     <string name="btn_twitter">Twitter</string>
@@ -14,7 +13,7 @@
     <string name="btn_whats_app">WhatsApp</string>
     <string name="btn_email">Email</string>
     <string name="btn_sms">SMS</string>
-    <string name="btn_qr_code">QR Code</string>
-    <string name="btn_copy_link">Copy link</string>
-    <string name="btn_more">More</string>
+    <string name="btn_qr_code">Código QR</string>
+    <string name="btn_copy_link">Copiar link</string>
+    <string name="btn_more">Más</string>
 </resources>

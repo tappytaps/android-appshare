@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_recommend">입을 친구에게 추천해주세요.</string>
+    <string name="title_qr_code">이 QR 코드를 스캔 하세요</string>
+    <string name="clipboard_copied">링크 복사</string>
+    <string name="btn_facebook">페이스북</string>
+    <string name="btn_messenger">페이스북 메신저</string>
+    <string name="btn_twitter">트위터</string>
+    <string name="btn_vkontakte">브깐딱쩨</string>
+    <string name="btn_wechat">위챗</string>
+    <string name="btn_odnoklassniki">Odnoklassniki</string>
+    <string name="btn_viber">바이 버</string>
+    <string name="btn_whats_app">왓츠앱</string>
+    <string name="btn_email">이메일</string>
+    <string name="btn_sms">메시지</string>
+    <string name="btn_qr_code">QR 코드</string>
+    <string name="btn_copy_link">링크 복사</string>
+    <string name="btn_more">더 보기</string>
+</resources>

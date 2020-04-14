@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_recommend">友達にアプリをすすめよう。</string>
+    <string name="title_qr_code">このQRコードをスキャンしよう</string>
+    <string name="clipboard_copied">リンクをコピーしました</string>
+    <string name="btn_facebook">フェイスブック</string>
+    <string name="btn_messenger">Messenger</string>
+    <string name="btn_twitter">Twitter</string>
+    <string name="btn_vkontakte">VKontakte</string>
+    <string name="btn_wechat">WeChat</string>
+    <string name="btn_odnoklassniki">Odnoklassniki</string>
+    <string name="btn_viber">バイバー</string>
+    <string name="btn_whats_app">WhatsApp</string>
+    <string name="btn_email">Eメール</string>
+    <string name="btn_sms">SMS</string>
+    <string name="btn_qr_code">QRコード</string>
+    <string name="btn_copy_link">コピー</string>
+    <string name="btn_more">その他</string>
+</resources>

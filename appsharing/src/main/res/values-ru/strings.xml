@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_recommend">Расскажите о приложении друзьям</string>
+    <string name="title_qr_code">Отсканируйте этот QR-код</string>
+    <string name="clipboard_copied">Ссылка скопирована</string>
+    <string name="btn_facebook">Facebook</string>
+    <string name="btn_messenger">Messenger</string>
+    <string name="btn_twitter">Twitter</string>
+    <string name="btn_vkontakte">ВКонтакте</string>
+    <string name="btn_wechat">WeChat</string>
+    <string name="btn_odnoklassniki">Одноклассники</string>
+    <string name="btn_viber">Viber</string>
+    <string name="btn_whats_app">WhatsApp</string>
+    <string name="btn_email">Емейл</string>
+    <string name="btn_sms">SMS</string>
+    <string name="btn_qr_code">QR код</string>
+    <string name="btn_copy_link">Копировать ссылку</string>
+    <string name="btn_more">Еще</string>
+</resources>

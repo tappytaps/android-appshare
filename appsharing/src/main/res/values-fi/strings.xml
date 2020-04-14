@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_recommend">Suosittele sovellusta ystävillesi</string>
+    <string name="title_qr_code">Lue tämä QR-koodi</string>
+    <string name="clipboard_copied">Linkki kopioitu</string>
+    <string name="btn_facebook">Facebook</string>
+    <string name="btn_messenger">Messenger</string>
+    <string name="btn_twitter">Twitter</string>
+    <string name="btn_vkontakte">VKontakte</string>
+    <string name="btn_wechat">WeChat</string>
+    <string name="btn_odnoklassniki">Odnoklassniki</string>
+    <string name="btn_viber">Viber</string>
+    <string name="btn_whats_app">WhatsApp</string>
+    <string name="btn_email">Sähköposti</string>
+    <string name="btn_sms">Tekstiviesti</string>
+    <string name="btn_qr_code">QR koodi</string>
+    <string name="btn_copy_link">Kopioi linkki</string>
+    <string name="btn_more">Lisää</string>
+</resources>
