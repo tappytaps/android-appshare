@@ -8,6 +8,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import androidx.fragment.app.FragmentManager;
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 import de.cketti.mailto.EmailIntentBuilder;
@@ -449,7 +451,7 @@ public class ShareAppFragment extends DialogFragment {
     private void shareViaEmail() {
         Intent sharingIntent = EmailIntentBuilder.from(getContext())
                 .subject(emailSubject)
-                .body(simpleMessage)
+                .body(Uri.encode(simpleMessage))
                 .build();
         try {
             getContext().startActivity(sharingIntent);
