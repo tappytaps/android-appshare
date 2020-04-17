@@ -34,6 +34,7 @@ You can use ShareAppFragment.Builder to create and show instance as shown in the
 
 - `setFacebookQuote()` for Facebook or `setTwitterMessage()` for Twitter may be used to customize messages for these netowrks, if they aren't set explicitly, simple message will be used
 - `setQrCodeUrl()` may be used for different url in QR code, if not set url will be used
+- `setListener()` can be used to pass instance of `ShareAppFragment.Listener` that will be called each time user performs share action and when the `ShareAppFragment` gets dismissed, passed listener must also implement `Parcelable`
 
 > Note: Strings may contain `{url}` to place URL inside
 
@@ -46,6 +47,7 @@ new ShareAppFragment.Builder()
         .setUrl("https://www.example.com")
         .setQrCodeUrl("https://www.example.org")
         .setStyle(yourAppTheme)
+        .setListener(new MyExampleListener())
         .show(getChildFragmentManager());
 ```
 

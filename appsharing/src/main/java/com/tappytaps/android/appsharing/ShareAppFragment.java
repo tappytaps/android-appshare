@@ -1,14 +1,15 @@
 package com.tappytaps.android.appsharing;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +25,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
-
-import java.nio.charset.Charset;
-import java.util.List;
 
 import de.cketti.mailto.EmailIntentBuilder;
 
@@ -44,6 +43,7 @@ public class ShareAppFragment extends DialogFragment {
         @Nullable private String url = null;
         @Nullable private String qrCodeUrl = null;
         @StyleRes private int styleRes = R.style.Theme_AppCompat_Light;
+        @Nullable private Listener listener = null;
 
         public Builder setSimpleMessage(String simpleMessage) {
             this.simpleMessage = simpleMessage;
@@ -80,6 +80,11 @@ public class ShareAppFragment extends DialogFragment {
             return this;
         }
 
+        public Builder setListener(Listener listener) {
+            this.listener = listener;
+            return this;
+        }
+
         public void show(FragmentManager fragmentManager) {
             if (url == null) {
                 throw new IllegalStateException("At least an URL is required.");
@@ -99,8 +104,17 @@ public class ShareAppFragment extends DialogFragment {
             args.putString(KEY_QR_CODE_URL, qrCodeUrl);
             args.putInt(KEY_STYLE_RES, styleRes);
 
+            if (listener instanceof Parcelable) {
+                args.putParcelable(KEY_LISTENER, (Parcelable) listener);
+            }
+
             newInstance(args).show(fragmentManager, TAG);
         }
+    }
+
+    public interface Listener {
+        void onShareAction(String using);
+        void onSharingDismissed();
     }
 
     private static ShareAppFragment newInstance(Bundle args) {
@@ -110,6 +124,20 @@ public class ShareAppFragment extends DialogFragment {
         return fragment;
     }
 
+    public static final String FACEBOOK = "facebook";
+    public static final String MESSENGER = "messenger";
+    public static final String TWITTER = "twitter";
+    public static final String VKONTAKTE = "vkontakte";
+    public static final String WE_CHAT = "we_chat";
+    public static final String ODNOKLASSNIKI = "odnoklassniki";
+    public static final String VIBER = "viber";
+    public static final String WHATS_APP = "whats_app";
+    public static final String EMAIL = "email";
+    public static final String SMS = "sms";
+    public static final String QR_CODE = "qr_code";
+    public static final String COPY_LINK = "copy_link";
+    public static final String MORE = "more";
+
     private static final String KEY_SIMPLE_MESSAGE = "simple_message";
     private static final String KEY_EMAIL_SUBJECT = "email_subject";
     private static final String KEY_FACEBOOK_QUOTE = "facebook_quote";
@@ -117,6 +145,7 @@ public class ShareAppFragment extends DialogFragment {
     private static final String KEY_URL = "url";
     private static final String KEY_QR_CODE_URL = "qr_code_url";
     private static final String KEY_STYLE_RES = "style_res";
+    private static final String KEY_LISTENER = "listener";
 
     private static final String TAG = "ShareAppFragment";
 
@@ -152,6 +181,8 @@ public class ShareAppFragment extends DialogFragment {
     private ConstraintLayout layoutCopyLink;
     private ConstraintLayout layoutMore;
 
+    private Listener listener = null;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,6 +197,10 @@ public class ShareAppFragment extends DialogFragment {
             url = args.getString(KEY_URL);
             qrCodeUrl = args.getString(KEY_QR_CODE_URL);
             styleRes = args.getInt(KEY_STYLE_RES);
+
+            if (args.containsKey(KEY_LISTENER)) {
+                listener = args.getParcelable(KEY_LISTENER);
+            }
         }
 
         setStyle(STYLE_NO_FRAME, styleRes);
@@ -213,6 +248,15 @@ public class ShareAppFragment extends DialogFragment {
         super.onActivityCreated(savedInstanceState);
 
         getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+        if (listener != null) {
+            listener.onSharingDismissed();
+        }
     }
 
     private void setupViews() {
@@ -371,6 +415,8 @@ public class ShareAppFragment extends DialogFragment {
                 .build();
 
         ShareDialog.show(this, content);
+
+        onShareAction(FACEBOOK);
     }
 
     private void shareViaMessenger() {
@@ -378,6 +424,7 @@ public class ShareAppFragment extends DialogFragment {
 
         try {
             startActivity(sharingIntent);
+            onShareAction(MESSENGER);
         }
         catch (android.content.ActivityNotFoundException ex) {
             Log.d(TAG, "Messenger not present, cannot share.");
@@ -389,6 +436,7 @@ public class ShareAppFragment extends DialogFragment {
 
         try {
             startActivity(sharingIntent);
+            onShareAction(TWITTER);
         } catch (Exception e) {
             Log.d(TAG, "Twitter not present, cannot share.");
         }
@@ -399,6 +447,7 @@ public class ShareAppFragment extends DialogFragment {
 
         try {
             startActivity(intent);
+            onShareAction(VKONTAKTE);
         } catch (Exception e) {
             Log.d(TAG, "VKontakte not present, cannot share.");
         }
@@ -413,6 +462,7 @@ public class ShareAppFragment extends DialogFragment {
 
         try {
             startActivity(i);
+            onShareAction(WE_CHAT);
         } catch (Exception e) {
             Log.d(TAG, "WeChat not present, cannot share.");
         }
@@ -423,6 +473,7 @@ public class ShareAppFragment extends DialogFragment {
 
         try {
             startActivity(sharingIntent);
+            onShareAction(ODNOKLASSNIKI);
         } catch (android.content.ActivityNotFoundException ex) {
             Log.d(TAG, "Odnoklassniki not present, cannot share.");
         }
@@ -433,6 +484,7 @@ public class ShareAppFragment extends DialogFragment {
 
         try {
             startActivity(sharingIntent);
+            onShareAction(VIBER);
         } catch (android.content.ActivityNotFoundException ex) {
             Log.d(TAG, "Viber not present, cannot share.");
         }
@@ -443,6 +495,7 @@ public class ShareAppFragment extends DialogFragment {
 
         try {
             startActivity(sharingIntent);
+            onShareAction(WHATS_APP);
         } catch (android.content.ActivityNotFoundException ex) {
             Log.d(TAG, "WhatsApp not present, cannot share.");
         }
@@ -454,7 +507,8 @@ public class ShareAppFragment extends DialogFragment {
                 .body(Uri.encode(simpleMessage))
                 .build();
         try {
-            getContext().startActivity(sharingIntent);
+            startActivity(sharingIntent);
+            onShareAction(EMAIL);
         } catch (Exception e) {
             Log.d(TAG, "Email client not present, cannot share.");
         }
@@ -464,11 +518,13 @@ public class ShareAppFragment extends DialogFragment {
         Intent sharingIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("sms:"));
         sharingIntent.putExtra("sms_body", simpleMessage);
         startActivity(sharingIntent);
+        onShareAction(SMS);
     }
 
     private void showQrCode() {
         QrCodeFragment qrCodeFragment = QrCodeFragment.newInstance(qrCodeUrl, styleRes);
         qrCodeFragment.show(getChildFragmentManager(), QrCodeFragment.TAG);
+        onShareAction(QR_CODE);
     }
 
     private void copyLink() {
@@ -476,6 +532,7 @@ public class ShareAppFragment extends DialogFragment {
         ClipData clipData = ClipData.newPlainText(simpleMessage, url);
         clipboard.setPrimaryClip(clipData);
         Toast.makeText(getContext(), R.string.clipboard_copied, Toast.LENGTH_SHORT).show();
+        onShareAction(COPY_LINK);
     }
 
     private void openShareChooser() {
@@ -486,6 +543,7 @@ public class ShareAppFragment extends DialogFragment {
 
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
+        onShareAction(MORE);
     }
 
     private boolean isPackageInstalled(String packageName) {
@@ -501,5 +559,11 @@ public class ShareAppFragment extends DialogFragment {
                 .setType("text/plain")
                 .setPackage(appPackageName)
                 .putExtra(Intent.EXTRA_TEXT, message);
+    }
+
+    private void onShareAction(String using) {
+        if (listener != null) {
+            listener.onShareAction(using);
+        }
     }
 }

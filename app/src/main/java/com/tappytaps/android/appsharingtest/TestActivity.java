@@ -1,6 +1,7 @@
 package com.tappytaps.android.appsharingtest;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -10,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.tappytaps.android.appsharing.ShareAppFragment;
 
 
-public class TestActivity extends AppCompatActivity {
+public class TestActivity extends AppCompatActivity implements ShareAppFragment.Listener {
+
+    private static final String TAG = "TestActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,5 +40,15 @@ public class TestActivity extends AppCompatActivity {
                         .show(getSupportFragmentManager());
             }
         });
+    }
+
+    @Override
+    public void onShareAction(String using) {
+        Log.d(TAG, "Share action using: " + using);
+    }
+
+    @Override
+    public void onSharingDismissed() {
+        Log.d(TAG, "Sharing dismissed");
     }
 }
