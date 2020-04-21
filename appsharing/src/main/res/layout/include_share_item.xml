@@ -26,7 +26,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:text="@string/btn_facebook"
-        android:textColor="@android:color/black"
+        android:textColor="@color/appSharing_text"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivIcon"

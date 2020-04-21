@@ -8,9 +8,9 @@
       android:strokeAlpha="0.2"
       android:strokeWidth="1.5"
       android:fillColor="#00000000"
-      android:strokeColor="#000"/>
+      android:strokeColor="@color/appSharing_foreground"/>
   <path
       android:pathData="M15,18.333c-0.917,0 -1.667,0.75 -1.667,1.667s0.75,1.667 1.667,1.667 1.667,-0.75 1.667,-1.667 -0.75,-1.667 -1.667,-1.667zM25,18.333c-0.917,0 -1.667,0.75 -1.667,1.667s0.75,1.667 1.667,1.667 1.667,-0.75 1.667,-1.667 -0.75,-1.667 -1.667,-1.667zM20,18.333c-0.917,0 -1.667,0.75 -1.667,1.667s0.75,1.667 1.667,1.667 1.667,-0.75 1.667,-1.667 -0.75,-1.667 -1.667,-1.667z"
-      android:fillColor="#000"
+      android:fillColor="@color/appSharing_foreground"
       android:fillAlpha="0.38"/>
 </vector>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/appSharing_background">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -39,7 +39,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:paddingBottom="12dp"
                 android:text="@string/title_recommend"
-                android:textColor="#DE000000"
+                android:textColor="@color/appSharing_titleText"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

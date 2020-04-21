@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="appSharing_background">#292929</color>
+    <color name="appSharing_foreground">#FFF</color>
+    <color name="appSharing_titleText">#DEFFFFFF</color>
+    <color name="appSharing_text">#99FFFFFF</color>
+    <color name="appSharing_iconTint">#8AFFFFFF</color>
+</resources>

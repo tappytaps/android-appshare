@@ -1,6 +1,5 @@
 package com.tappytaps.android.appsharing;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -25,7 +24,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.facebook.share.model.ShareLinkContent;
