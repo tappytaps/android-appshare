@@ -28,7 +28,7 @@
         android:gravity="center"
         android:paddingBottom="8dp"
         android:text="@string/title_qr_code"
-        android:textColor="@color/appSharing_text"
+        android:textColor="@color/appSharing_titleText"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/ivQrCode"
         app:layout_constraintEnd_toEndOf="parent"

@@ -3,7 +3,7 @@ apply plugin: 'maven-publish'
 
 group = 'com.tappytaps.android'
 archivesBaseName = 'app-sharing'
-version = '1.0.4'
+version = '1.0.5'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
