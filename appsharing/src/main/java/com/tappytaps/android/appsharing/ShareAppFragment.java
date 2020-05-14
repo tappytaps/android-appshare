@@ -89,7 +89,7 @@ public class ShareAppFragment extends DialogFragment {
             }
 
             final String simpleMessage = this.simpleMessage != null ? this.simpleMessage.replace("{url}", url) : url;
-            final String facebookQuote = this.facebookQuote != null ? this.facebookQuote.replace("{url}", url) : this.simpleMessage;
+            final String facebookQuote = this.facebookQuote != null ? this.facebookQuote.replace("{url}", url) : simpleMessage;
             final String twitterMessage = this.twitterMessage != null ? this.twitterMessage.replace("{url}", url) : url;
             final String qrCodeUrl = this.qrCodeUrl != null ? this.qrCodeUrl : url;
 
@@ -502,7 +502,7 @@ public class ShareAppFragment extends DialogFragment {
     private void shareViaEmail() {
         Intent sharingIntent = EmailIntentBuilder.from(getContext())
                 .subject(emailSubject)
-                .body(Uri.encode(simpleMessage))
+                .body(simpleMessage)
                 .build();
         try {
             startActivity(sharingIntent);
