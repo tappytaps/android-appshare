@@ -88,9 +88,9 @@ public class QrCodeFragment extends DialogFragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onStart() {
+        super.onStart();
 
-        getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        requireDialog().getWindow().setWindowAnimations(R.style.DialogAnimation);
     }
 }

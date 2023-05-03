@@ -26,9 +26,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.ShareDialog;
-
 import de.cketti.mailto.EmailIntentBuilder;
 
 public class ShareAppFragment extends DialogFragment {
@@ -36,7 +33,6 @@ public class ShareAppFragment extends DialogFragment {
     public static class Builder {
         @Nullable private String simpleMessage = null;
         @Nullable private String emailSubject = null;
-        @Nullable private String facebookQuote = null;
         @Nullable private String twitterMessage = null;
         @Nullable private String url = null;
         @Nullable private String qrCodeUrl = null;
@@ -50,11 +46,6 @@ public class ShareAppFragment extends DialogFragment {
 
         public Builder setEmailSubject(String emailSubject) {
             this.emailSubject = emailSubject;
-            return this;
-        }
-
-        public Builder setFacebookQuote(String facebookQuote) {
-            this.facebookQuote = facebookQuote;
             return this;
         }
 
@@ -89,14 +80,12 @@ public class ShareAppFragment extends DialogFragment {
             }
 
             final String simpleMessage = this.simpleMessage != null ? this.simpleMessage.replace("{url}", url) : url;
-            final String facebookQuote = this.facebookQuote != null ? this.facebookQuote.replace("{url}", url) : simpleMessage;
-            final String twitterMessage = this.twitterMessage != null ? this.twitterMessage.replace("{url}", url) : url;
+            final String twitterMessage = this.twitterMessage != null ? this.twitterMessage.replace("{url}", url) : simpleMessage;
             final String qrCodeUrl = this.qrCodeUrl != null ? this.qrCodeUrl : url;
 
             Bundle args = new Bundle();
             args.putString(KEY_SIMPLE_MESSAGE, simpleMessage);
             args.putString(KEY_EMAIL_SUBJECT, emailSubject);
-            args.putString(KEY_FACEBOOK_QUOTE, facebookQuote);
             args.putString(KEY_TWITTER_MESSAGE, twitterMessage);
             args.putString(KEY_URL, url);
             args.putString(KEY_QR_CODE_URL, qrCodeUrl);
@@ -122,7 +111,6 @@ public class ShareAppFragment extends DialogFragment {
         return fragment;
     }
 
-    public static final String FACEBOOK = "facebook";
     public static final String MESSENGER = "messenger";
     public static final String TWITTER = "twitter";
     public static final String VKONTAKTE = "vkontakte";
@@ -138,7 +126,6 @@ public class ShareAppFragment extends DialogFragment {
 
     private static final String KEY_SIMPLE_MESSAGE = "simple_message";
     private static final String KEY_EMAIL_SUBJECT = "email_subject";
-    private static final String KEY_FACEBOOK_QUOTE = "facebook_quote";
     private static final String KEY_TWITTER_MESSAGE = "twitter_message";
     private static final String KEY_URL = "url";
     private static final String KEY_QR_CODE_URL = "qr_code_url";
@@ -147,7 +134,6 @@ public class ShareAppFragment extends DialogFragment {
 
     private static final String TAG = "ShareAppFragment";
 
-    private static final String FACEBOOK_PACKAGE_NAME = "com.facebook.katana";
     private static final String MESSENGER_PACKAGE_NAME = "com.facebook.orca";
     private static final String TWITTER_PACKAGE_NAME = "com.twitter.android";
     private static final String VKONTAKTE_PACKAGE_NAME = "com.vkontakte.android";
@@ -160,12 +146,10 @@ public class ShareAppFragment extends DialogFragment {
 
     private String simpleMessage;
     private String emailSubject;
-    private String facebookQuote;
     private String twitterMessage;
     private String url;
     private String qrCodeUrl;
 
-    private ConstraintLayout layoutFacebook;
     private ConstraintLayout layoutMessenger;
     private ConstraintLayout layoutTwitter;
     private ConstraintLayout layoutVKontakte;
@@ -181,6 +165,8 @@ public class ShareAppFragment extends DialogFragment {
 
     private Listener listener = null;
 
+    private boolean shouldAnimateOnStart = true;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,7 +176,6 @@ public class ShareAppFragment extends DialogFragment {
         if (args != null) {
             simpleMessage = args.getString(KEY_SIMPLE_MESSAGE);
             emailSubject = args.getString(KEY_EMAIL_SUBJECT, "");
-            facebookQuote = args.getString(KEY_FACEBOOK_QUOTE);
             twitterMessage = args.getString(KEY_TWITTER_MESSAGE);
             url = args.getString(KEY_URL);
             qrCodeUrl = args.getString(KEY_QR_CODE_URL);
@@ -223,7 +208,6 @@ public class ShareAppFragment extends DialogFragment {
             }
         });
 
-        layoutFacebook = view.findViewById(R.id.facebook);
         layoutMessenger = view.findViewById(R.id.messenger);
         layoutTwitter = view.findViewById(R.id.twitter);
         layoutVKontakte = view.findViewById(R.id.vkontakte);
@@ -242,10 +226,17 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onStart() {
+        super.onStart();
 
-        getDialog().getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        requireDialog().getWindow().setWindowAnimations(shouldAnimateOnStart ? R.style.DialogAnimation : R.style.DialogAnimation_ExitOnly);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        shouldAnimateOnStart = false;
     }
 
     @Override
@@ -258,19 +249,18 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void setupViews() {
-        setupItem(layoutFacebook, ContextCompat.getDrawable(getContext(), R.drawable.ic_facebook), getString(R.string.btn_facebook));
-        setupItem(layoutMessenger, ContextCompat.getDrawable(getContext(), R.drawable.ic_messenger), getString(R.string.btn_messenger));
-        setupItem(layoutTwitter, ContextCompat.getDrawable(getContext(), R.drawable.ic_twitter), getString(R.string.btn_twitter));
-        setupItem(layoutVKontakte, ContextCompat.getDrawable(getContext(), R.drawable.ic_vkontakte), getString(R.string.btn_vkontakte));
-        setupItem(layoutWeChat, ContextCompat.getDrawable(getContext(), R.drawable.ic_wechat), getString(R.string.btn_wechat));
-        setupItem(layoutOdnoklassniki, ContextCompat.getDrawable(getContext(), R.drawable.ic_odnoklassniki), getString(R.string.btn_odnoklassniki));
-        setupItem(layoutViber, ContextCompat.getDrawable(getContext(), R.drawable.ic_viber), getString(R.string.btn_viber));
-        setupItem(layoutWhatsApp, ContextCompat.getDrawable(getContext(), R.drawable.ic_whatsapp), getString(R.string.btn_whats_app));
-        setupItem(layoutEmail, ContextCompat.getDrawable(getContext(), R.drawable.ic_message), getString(R.string.btn_email));
-        setupItem(layoutSms, ContextCompat.getDrawable(getContext(), R.drawable.ic_sms), getString(R.string.btn_sms));
-        setupItem(layoutQrCode, ContextCompat.getDrawable(getContext(), R.drawable.ic_qr_code), getString(R.string.btn_qr_code));
-        setupItem(layoutCopyLink, ContextCompat.getDrawable(getContext(), R.drawable.ic_copy), getString(R.string.btn_copy_link));
-        setupItem(layoutMore, ContextCompat.getDrawable(getContext(), R.drawable.ic_more), getString(R.string.btn_more));
+        setupItem(layoutMessenger, ContextCompat.getDrawable(requireContext(), R.drawable.ic_messenger), getString(R.string.btn_messenger));
+        setupItem(layoutTwitter, ContextCompat.getDrawable(requireContext(), R.drawable.ic_twitter), getString(R.string.btn_twitter));
+        setupItem(layoutVKontakte, ContextCompat.getDrawable(requireContext(), R.drawable.ic_vkontakte), getString(R.string.btn_vkontakte));
+        setupItem(layoutWeChat, ContextCompat.getDrawable(requireContext(), R.drawable.ic_wechat), getString(R.string.btn_wechat));
+        setupItem(layoutOdnoklassniki, ContextCompat.getDrawable(requireContext(), R.drawable.ic_odnoklassniki), getString(R.string.btn_odnoklassniki));
+        setupItem(layoutViber, ContextCompat.getDrawable(requireContext(), R.drawable.ic_viber), getString(R.string.btn_viber));
+        setupItem(layoutWhatsApp, ContextCompat.getDrawable(requireContext(), R.drawable.ic_whatsapp), getString(R.string.btn_whats_app));
+        setupItem(layoutEmail, ContextCompat.getDrawable(requireContext(), R.drawable.ic_message), getString(R.string.btn_email));
+        setupItem(layoutSms, ContextCompat.getDrawable(requireContext(), R.drawable.ic_sms), getString(R.string.btn_sms));
+        setupItem(layoutQrCode, ContextCompat.getDrawable(requireContext(), R.drawable.ic_qr_code), getString(R.string.btn_qr_code));
+        setupItem(layoutCopyLink, ContextCompat.getDrawable(requireContext(), R.drawable.ic_copy), getString(R.string.btn_copy_link));
+        setupItem(layoutMore, ContextCompat.getDrawable(requireContext(), R.drawable.ic_more), getString(R.string.btn_more));
     }
 
     private void setupItem(View item, Drawable icon, String description) {
@@ -282,139 +272,53 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void prepareListenersOrHideItems() {
-        if (isPackageInstalled(FACEBOOK_PACKAGE_NAME)) {
-            layoutFacebook.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    shareViaFacebook();
-                }
-            });
-        } else {
-            layoutFacebook.setVisibility(View.GONE);
-        }
-
         if (isPackageInstalled(MESSENGER_PACKAGE_NAME)) {
-            layoutMessenger.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    shareViaMessenger();
-                }
-            });
+            layoutMessenger.setOnClickListener(view -> shareViaMessenger());
         } else {
             layoutMessenger.setVisibility(View.GONE);
         }
 
         if (isPackageInstalled(TWITTER_PACKAGE_NAME)) {
-            layoutTwitter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    shareViaTwitter();
-                }
-            });
+            layoutTwitter.setOnClickListener(view -> shareViaTwitter());
         } else {
             layoutTwitter.setVisibility(View.GONE);
         }
 
         if (isPackageInstalled(VKONTAKTE_PACKAGE_NAME)) {
-            layoutVKontakte.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    shareViaVKontakte();
-                }
-            });
+            layoutVKontakte.setOnClickListener(view -> shareViaVKontakte());
         } else {
             layoutVKontakte.setVisibility(View.GONE);
         }
 
         if (isPackageInstalled(WE_CHAT_PACKAGE_NAME)) {
-            layoutWeChat.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    shareViaWeChat();
-                }
-            });
+            layoutWeChat.setOnClickListener(view -> shareViaWeChat());
         } else {
             layoutWeChat.setVisibility(View.GONE);
         }
 
         if (isPackageInstalled(ODNOKLASSNIKI_PACKAGE_NAME)) {
-            layoutOdnoklassniki.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    shareVieOdnoklassniki();
-                }
-            });
+            layoutOdnoklassniki.setOnClickListener(view -> shareVieOdnoklassniki());
         } else {
             layoutOdnoklassniki.setVisibility(View.GONE);
         }
 
         if (isPackageInstalled(VIBER_PACKAGE_NAME)) {
-            layoutViber.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    shareViaViber();
-                }
-            });
+            layoutViber.setOnClickListener(view -> shareViaViber());
         } else {
             layoutViber.setVisibility(View.GONE);
         }
 
         if (isPackageInstalled(WHATS_APP_PACKAGE_NAME)) {
-            layoutWhatsApp.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    shareViaWhatsApp();
-                }
-            });
+            layoutWhatsApp.setOnClickListener(view -> shareViaWhatsApp());
         } else {
             layoutWhatsApp.setVisibility(View.GONE);
         }
 
-        layoutEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareViaEmail();
-            }
-        });
-
-        layoutSms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareViaSms();
-            }
-        });
-
-        layoutQrCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showQrCode();
-            }
-        });
-
-        layoutCopyLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                copyLink();
-            }
-        });
-
-        layoutMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openShareChooser();
-            }
-        });
-    }
-
-    private void shareViaFacebook() {
-        ShareLinkContent content = new ShareLinkContent.Builder()
-                .setContentUrl(Uri.parse(url))
-                .setQuote(facebookQuote)
-                .build();
-
-        ShareDialog.show(this, content);
-
-        onShareAction(FACEBOOK);
+        layoutEmail.setOnClickListener(view -> shareViaEmail());
+        layoutSms.setOnClickListener(view -> shareViaSms());
+        layoutQrCode.setOnClickListener(view -> showQrCode());
+        layoutCopyLink.setOnClickListener(view -> copyLink());
+        layoutMore.setOnClickListener(view -> openShareChooser());
     }
 
     private void shareViaMessenger() {
@@ -441,7 +345,7 @@ public class ShareAppFragment extends DialogFragment {
     }
 
     private void shareViaVKontakte() {
-        Intent intent = initCommonShareIntent(VKONTAKTE_PACKAGE_NAME, facebookQuote);
+        Intent intent = initCommonShareIntent(VKONTAKTE_PACKAGE_NAME, simpleMessage);
 
         try {
             startActivity(intent);

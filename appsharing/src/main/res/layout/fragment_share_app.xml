@@ -46,22 +46,13 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <include
-                android:id="@+id/facebook"
-                layout="@layout/include_share_item"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvRecommend" />
-
-            <include
                 android:id="@+id/messenger"
                 layout="@layout/include_share_item"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/facebook" />
+                app:layout_constraintTop_toBottomOf="@+id/tvRecommend" />
 
             <include
                 android:id="@+id/twitter"

@@ -33,7 +33,6 @@ public class TestActivity extends AppCompatActivity implements ShareAppFragment.
                 new ShareAppFragment.Builder()
                         .setSimpleMessage("Simple message saying something very clever {url}")
                         .setEmailSubject("Something to share")
-                        .setFacebookQuote("At the link below you can find... {url}")
                         .setTwitterMessage("This message also says something clever, shares {url} #and #sum #hashtagz")
                         .setUrl("https://www.babymonitor3g.com")
                         .setQrCodeUrl("https://www.tappytaps.com")
