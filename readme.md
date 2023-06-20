@@ -6,7 +6,7 @@ This library serves for easy sharing within apps on Android. It supports direct 
 
 ### Add gradle dependency
 
-  1. Add URL and password as `myMavenRepoUrl` and `myMavenPassword` inside `gradle.properties`
+  1. Add URL and password as `myMavenRepoUrl` and `myMavenRepoPassword` inside `gradle.properties`
   2. Add repository inside your app's `build.gradle`
 ```gradle
 allprojects {
@@ -23,14 +23,14 @@ allprojects {
 ```
   3. Add dependency inside your module's `build.gradle`
 ```gradle
-implementation('com.tappytaps.android:app-sharing:0.3.6@aar') {
+implementation('com.tappytaps.android:app-sharing:1.2.0@aar') {
     transitive = true
 }
 ```
 
 ### Usage in code
 
-You can use ShareAppFragment.Builder to create and show instance as shown in the following example. All possible variables are set in this example, although only `setUrl()` is required.
+You can use `ShareAppFragment.Builder` to create and show instance as shown in the following example. All possible variables are set in this example, although only `setUrl()` is required.
 
 - `setTwitterMessage()` may be used to customize message for Twitter tweet, if it isn't set explicitly, simple message will be used
 - `setQrCodeUrl()` may be used for different url in QR code, if not set url will be used
